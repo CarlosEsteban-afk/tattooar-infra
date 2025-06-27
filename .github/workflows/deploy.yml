@@ -1,0 +1,57 @@
+name: Deploy to VPS
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    name: Deploy Infra
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Generate .env Files
+        run: |
+          echo "Generando archivos de entorno"
+          mkdir -p env-backend env-frontend
+
+          # Backend
+          echo "EMAIL_PASS=${{ secrets.EMAIL_PASS }}" > env-backend/.env
+          echo "EMAIL_USER=${{ secrets.EMAIL_USER }}" >> env-backend/.env
+          echo "JWT_EXPIRES_IN=${{ secrets.JWT_EXPIRES_IN }}" >> env-backend/.env
+          echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> env-backend/.env
+          echo "R2_ACCESS_KEY_ID=${{ secrets.R2_ACCESS_KEY_ID }}" >> env-backend/.env
+          echo "MONGODB_URI=${{ secrets.MONGODB_URI }}" >> env-backend/.env
+          echo "PORT=${{ secrets.PORT }}" >> env-backend/.env
+          echo "R2_ACCESS_KEY_ID=${{ secrets.R2_ACCESS_KEY_ID }}" >> env-backend/.env
+          echo "R2_ACCOUNT_ID=${{    secrets.R2_ACCOUNT_ID }}" >> env-backend/.env
+          echo "R2_BUCKET=${{ secrets.R2_BUCKET }}" >> env-backend/.env
+          echo "R2_DEV_ENDPOINT=${{ secrets.R2_DEV_ENDPOINT }}" >> env-backend/.env
+          echo "R2_ENDPOINT=${{ secrets.R2_ENDPOINT }}" >> env-backend/.env
+          echo "R2_REGION=${{ secrets.R2_REGION }}" >> env-backend/.env
+          echo "R2_SECRET_ACCESS_KEY=${{ secrets.R2_SECRET_ACCESS_KEY }}" >> env-backend/.env
+          echo "R2_TOKEN_VALUE=${{ secrets.R2_TOKEN_VALUE }}" >> env-backend/.env
+
+
+          # Frontend
+          echo "VITE_API_BASE_URL=${{ secrets.VITE_API_BASE_URL }}" > env-frontend/.env
+
+      - name: Set up SSH
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.VPS_SSH_KEY }}
+
+      - name: Copy files to VPS
+        run: |
+          echo "🚀 Uploading files to VPS..."
+          scp -r compose.yml deploy.sh env-backend env-frontend ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:/home/tendify/
+
+      - name: SSH into VPS and Deploy
+        run: |
+          echo "🚀 Running remote deploy..."
+          ssh ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} "chmod +x /home/tendify/deploy.sh && /home/tendify/deploy.sh"

@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  frontend:
+    image: carlso/tattooar-frontend:latest
+    env_file: ./env-frontend/.env
+    ports:
+      - "3000:80"
+    restart: always
+
+  backend:
+    image: carlso/tattooar-backend:latest
+    env_file: ./env-backend/.env
+    ports:
+      - "4000:4000"
+    restart: always
