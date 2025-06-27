@@ -15,11 +15,11 @@ echo "$DOCKER_HUB_PASSWORD" | docker login --username "$DOCKER_HUB_USERNAME" --p
 }
 
 echo "🧹 Deteniendo contenedores y limpiando..."
-docker compose /home/tattooAR/compose.yml down 
+docker compose -f /home/tattooAR/compose.yml down --remove-orphans || true
 docker image prune -af
 
 echo "🚀 Levantando contenedores..."
-docker compose /home/tattooAR/compose.yml up -d || {
+docker compose -f /home/tattooAR/compose.yml up -d || {
     echo "❌ Error al iniciar contenedores"
     docker ps -a | grep tattooAR
     exit 1
