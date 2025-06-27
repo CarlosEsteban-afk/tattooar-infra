@@ -15,7 +15,7 @@ echo "$DOCKER_HUB_PASSWORD" | docker login --username "$DOCKER_HUB_USERNAME" --p
 }
 
 echo "🧹 Deteniendo contenedores y limpiando..."
-docker compose /home/tattooAR/compose.yml down --remove-orphans || true
+docker compose /home/tattooAR/compose.yml down 
 docker image prune -af
 
 echo "🚀 Levantando contenedores..."
