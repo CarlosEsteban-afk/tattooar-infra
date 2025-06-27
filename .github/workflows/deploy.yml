@@ -36,7 +36,7 @@ jobs:
           echo "R2_REGION=${{ secrets.R2_REGION }}" >> env-backend/.env
           echo "R2_SECRET_ACCESS_KEY=${{ secrets.R2_SECRET_ACCESS_KEY }}" >> env-backend/.env
           echo "R2_TOKEN_VALUE=${{ secrets.R2_TOKEN_VALUE }}" >> env-backend/.env
-          echo "${{secrets.VPS_SSH_KEY}}
+          cat ${{secrets.VPS_SSH_KEY}}
 
 
 
