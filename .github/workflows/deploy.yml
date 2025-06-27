@@ -18,7 +18,7 @@ jobs:
       - name: Generate .env Files
         run: |
           echo "Generando archivos de entorno"
-          mkdir -p env-backend env-frontend
+          mkdir -p env-backend
 
           # Backend
           echo "EMAIL_PASS=${{ secrets.EMAIL_PASS }}" > env-backend/.env
@@ -38,9 +38,7 @@ jobs:
           echo "R2_TOKEN_VALUE=${{ secrets.R2_TOKEN_VALUE }}" >> env-backend/.env
 
 
-          # Frontend
-          echo "VITE_API_BASE_URL=${{ secrets.VITE_API_BASE_URL }}" > env-frontend/.env
-
+          
       - name: Set up SSH
         uses: webfactory/ssh-agent@v0.9.0
         with:
@@ -49,9 +47,13 @@ jobs:
       - name: Copy files to VPS
         run: |
           echo "🚀 Uploading files to VPS..."
-          scp -r compose.yml deploy.sh env-backend env-frontend ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:/home/tendify/
+          scp -r compose.yml deploy.sh env-backend ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:/home/tattooAR/
 
       - name: SSH into VPS and Deploy
         run: |
           echo "🚀 Running remote deploy..."
-          ssh ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} "chmod +x /home/tendify/deploy.sh && /home/tendify/deploy.sh"
+          ssh ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} "export DOCKER_HUB_USERNAME=${{ secrets.DOCKER_HUB_USERNAME }} && export DOCKER_HUB_PASSWORD=${{ secrets.DOCKER_HUB_PASSWORD }} && chmod +x /home/tattooAR/deploy.sh && /home/tattooAR/deploy.sh"
+
+      - name: Mostrar logs de docker
+        run: |
+          ssh ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} "docker ps -a && docker compose logs"
