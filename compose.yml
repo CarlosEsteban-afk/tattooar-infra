@@ -2,8 +2,10 @@ services:
   frontend:
     image: carlso/tattooar-frontend:latest
     ports:
-      - "80:80"
+      - "443:443"
     restart: always
+    volumes:
+      - /etc/ssl/selfsigned:/etc/nginx/ssl:ro
 
   backend:
     image: carlso/tattooar-backend:latest
