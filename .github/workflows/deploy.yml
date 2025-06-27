@@ -57,7 +57,3 @@ jobs:
         run: |
           echo "🚀 Running remote deploy..."
           ssh ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} "export DOCKER_HUB_USERNAME=${{ secrets.DOCKER_HUB_USERNAME }} && export DOCKER_HUB_PASSWORD=${{ secrets.DOCKER_HUB_PASSWORD }} && chmod +x /home/tattooAR/deploy.sh && /home/tattooAR/deploy.sh"
-
-      - name: Mostrar logs de docker
-        run: |
-          ssh ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} "docker ps -a && docker compose logs"
